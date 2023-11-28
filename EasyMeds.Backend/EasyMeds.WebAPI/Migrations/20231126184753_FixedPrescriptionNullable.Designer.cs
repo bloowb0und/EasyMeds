@@ -3,6 +3,7 @@ using System;
 using EasyMeds.WebAPI.Core.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EasyMeds.WebAPI.Migrations
 {
     [DbContext(typeof(EasyMedsDbContext))]
-    partial class EasyMedsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231126184753_FixedPrescriptionNullable")]
+    partial class FixedPrescriptionNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,7 +66,7 @@ namespace EasyMeds.WebAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("EndTimeUTC")
+                    b.Property<DateTime>("EndTimeUTC")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Frequency")
@@ -75,7 +78,7 @@ namespace EasyMeds.WebAPI.Migrations
                     b.Property<int>("PrescriptionId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("StartTimeUTC")
+                    b.Property<DateTime>("StartTimeUTC")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");

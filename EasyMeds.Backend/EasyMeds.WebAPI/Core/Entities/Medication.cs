@@ -7,7 +7,7 @@ public class Medication : BaseEntity
     public int MedicineId { get; set; }
     public Medicine Medicine { get; set; }
     public int Frequency { get; set; }
-    public DateTime StartTimeUTC { get; set; }
-    public DateTime EndTimeUTC { get; set; }
+    public DateTime? StartTimeUTC { get; set; }
+    public DateTime? EndTimeUTC { get; set; }
     public List<MedicationLog> MedicationLogs { get; set; }
 }

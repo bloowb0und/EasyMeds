@@ -62,6 +62,10 @@ builder.Services.AddSingleton<IJwtService, JwtService>();
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IDoctorService, DoctorService>();
+builder.Services.AddScoped<IMedicineService, MedicineService>();
+builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
+builder.Services.AddScoped<IMedicationService, MedicationService>();
 
 var app = builder.Build();
 

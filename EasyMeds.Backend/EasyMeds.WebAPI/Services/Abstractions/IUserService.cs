@@ -11,5 +11,5 @@ public interface IUserService
     Task UpdateUserAsync(int id, UpdateUserDto user);
     Task DeleteUserAsync(int id);
     Task<User?> LogInAsync(string email, string password);
-    Task<bool> SignUpAsync(SignUpDto signUpDto);
+    Task<bool> SignUpAsync(UserSignUpDto userSignUpDto);
 }

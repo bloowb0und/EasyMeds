@@ -1,5 +1,4 @@
-﻿using EasyMeds.WebAPI.Core.Attributes;
-using EasyMeds.WebAPI.Core.Constants;
+﻿using EasyMeds.WebAPI.Core.Constants;
 using EasyMeds.WebAPI.Core.DTOs.User;
 using EasyMeds.WebAPI.Core.Entities;
 using EasyMeds.WebAPI.Services.Abstractions;
@@ -87,13 +86,13 @@ public class UserController(IUserService userService, IJwtService jwtService) : 
     }
     
     [HttpPost("login")]
-    public async Task<ActionResult<string>> Login([FromBody] LoginDto loginDto)
+    public async Task<ActionResult<string>> Login([FromBody] UserLoginDto userLoginDto)
     {
-        var user = await userService.LogInAsync(loginDto.Email, loginDto.Password);
+        var user = await userService.LogInAsync(userLoginDto.Email, userLoginDto.Password);
 
         if (user == null)
         {
-            return Unauthorized("Invalid username or password");
+            return Unauthorized("Invalid email or password");
         }
         
         var token = jwtService.GenerateToken(user.Id, Role.UserRole);
@@ -101,11 +100,11 @@ public class UserController(IUserService userService, IJwtService jwtService) : 
     }
     
     [HttpPost("signup")]
-    public async Task<ActionResult> SignUp([FromBody] SignUpDto signUpDto)
+    public async Task<ActionResult> SignUp([FromBody] UserSignUpDto userSignUpDto)
     {
         try
         {
-            var result = await userService.SignUpAsync(signUpDto);
+            var result = await userService.SignUpAsync(userSignUpDto);
 
             if (result)
             {

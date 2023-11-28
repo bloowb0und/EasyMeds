@@ -3,6 +3,7 @@ using System;
 using EasyMeds.WebAPI.Core.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EasyMeds.WebAPI.Migrations
 {
     [DbContext(typeof(EasyMedsDbContext))]
-    partial class EasyMedsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231128211415_medication-dates-nullable")]
+    partial class medicationdatesnullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

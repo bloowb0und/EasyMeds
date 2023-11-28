@@ -3,7 +3,7 @@ using System.Text;
 
 namespace EasyMeds.WebAPI.Utils;
 
-public static class UserHelper
+public static class PasswordHelper
 {
     public static (string hashedPassword, string salt) HashPassword(string password)
     {
