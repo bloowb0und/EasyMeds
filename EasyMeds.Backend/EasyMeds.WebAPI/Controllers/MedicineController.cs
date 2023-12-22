@@ -9,7 +9,6 @@ namespace EasyMeds.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[DoctorRoleInterceptor]
 [Authorize]
 public class MedicineController(IMedicineService medicineService) : ControllerBase
 {
@@ -60,8 +59,8 @@ public class MedicineController(IMedicineService medicineService) : ControllerBa
         return Ok(result);
     }
 
-    [HttpPost("/takeMedicines")]
-    public async Task<ActionResult<List<PrescriptedMedicineDto>>> RetrieveUserMedicine(int userId)
+    [HttpPost("takeMedicines/{userId:int}")]
+    public async Task<ActionResult<PrescriptedMedicineDtoList>> RetrieveUserMedicine(int userId)
     {
         List<PrescriptedMedicineDto> result;
 
@@ -91,6 +90,6 @@ public class MedicineController(IMedicineService medicineService) : ControllerBa
             return NotFound("No prescribed medications were found. ");
         }
         
-        return Ok(result);
+        return Ok(new PrescriptedMedicineDtoList(result));
     }
 }

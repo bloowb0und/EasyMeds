@@ -81,8 +81,10 @@ public class MedicineService(EasyMedsDbContext context) : IMedicineService
     {
         var currentDateUTC = DateTime.UtcNow.Date;
         
-        var prescriptedMedicines = await context.Prescriptions
-            .Where(p => p.UserId == userId && p.DatePrescribedUTC != null)
+        var prescriptedMedicines = (await context.Prescriptions
+                .Include(x => x.Medications)
+                .Where(p => p.UserId == userId && p.DatePrescribedUTC != null)
+                .ToListAsync())
             .SelectMany(p => p.Medications
                 .Select(m => new PrescriptedMedicineDto(
                     p.Id,
@@ -94,8 +96,9 @@ public class MedicineService(EasyMedsDbContext context) : IMedicineService
                 )))
             .Where(dto => dto.Duration > 0 && dto.DatePrescribedUTC.AddDays(dto.Duration) >= currentDateUTC)
             .Where(dto => dto.Frequency > 0) // Frequency validation
-            .ToListAsync();
+            .ToList();
 
+        var resPrescripterMedicines = new List<PrescriptedMedicineDto>(prescriptedMedicines);
         foreach (var medicationDto in prescriptedMedicines)
         {
             var medicationLogsCount = context.MedicationLogs
@@ -103,31 +106,33 @@ public class MedicineService(EasyMedsDbContext context) : IMedicineService
                               && log.UserId == userId
                               && log.TimestampUTC.Date == currentDateUTC.Date);
 
-            if (medicationLogsCount < medicationDto.Frequency)
+            if (medicationLogsCount >= medicationDto.Frequency)
             {
-                // throw error in case the medication was already taken for maximum frequency
-                throw new FieldAccessException();
+                // ignore in case the medication was already taken for maximum frequency
+                resPrescripterMedicines.Remove(medicationDto);
+                continue;
             }
             
-            if (!context.MedicationLogs
-                    .Any(log => log.MedicationId == medicationDto.MedicationId
-                                && log.UserId == userId
-                                && log.TimestampUTC.Date == currentDateUTC))
+            // Log medication taken
+            var logEntry = new MedicationLog
             {
-                // Log medication taken
-                var logEntry = new MedicationLog
-                {
-                    UserId = userId,
-                    MedicationId = medicationDto.MedicationId,
-                    TimestampUTC = DateTime.UtcNow
-                };
+                UserId = userId,
+                MedicationId = medicationDto.MedicationId,
+                TimestampUTC = DateTime.UtcNow,
+                Status = "Taken"
+            };
 
-                context.MedicationLogs.Add(logEntry);
-            }
+            context.MedicationLogs.Add(logEntry);
+        }
+
+        if (prescriptedMedicines.Count > 0 && resPrescripterMedicines.Count < 1)
+        {
+            // error in case medications was already taken for maximum frequency
+            throw new FieldAccessException();
         }
 
         await context.SaveChangesAsync();
 
-        return prescriptedMedicines;
+        return resPrescripterMedicines;
     }
 }

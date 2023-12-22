@@ -7,4 +7,5 @@ public class User
     public string Password { get; set; }
     public string Salt { get; set; }
     public string Email { get; set; }
+    public List<int> Prescriptions { get; set; }
 }
