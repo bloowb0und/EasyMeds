@@ -1,6 +1,6 @@
-﻿using EasyMeds.WebAPI.Core.Attributes;
+﻿using System.Security.Claims;
+using EasyMeds.WebAPI.Core.Attributes;
 using EasyMeds.WebAPI.Core.DTOs.Medicine;
-using EasyMeds.WebAPI.Core.Entities;
 using EasyMeds.WebAPI.Services.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -57,6 +57,40 @@ public class MedicineController(IMedicineService medicineService) : ControllerBa
         if (!result)
             return NotFound();
 
+        return Ok(result);
+    }
+
+    [HttpPost("/takeMedicines")]
+    public async Task<ActionResult<List<PrescriptedMedicineDto>>> RetrieveUserMedicine(int userId)
+    {
+        List<PrescriptedMedicineDto> result;
+
+        try
+        {
+            result = await medicineService.GetPrescriptedMedicines(userId);
+        }
+        catch (ArgumentException)
+        {
+            // error in case of bad input
+            return BadRequest("Bad input");
+        }
+        catch (FieldAccessException)
+        {
+            // error in case of no medications left to take today
+            return BadRequest("No medications left to take today");
+        }
+        catch (Exception)
+        {
+            // error in case of unexpected error
+            return Problem("Unexpected error happened.");
+        }
+
+        if (result.Count < 1)
+        {
+           // not found in case if no medications to take were found
+            return NotFound("No prescribed medications were found. ");
+        }
+        
         return Ok(result);
     }
 }

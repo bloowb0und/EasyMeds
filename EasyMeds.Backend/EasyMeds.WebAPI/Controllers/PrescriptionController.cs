@@ -63,7 +63,7 @@ public class PrescriptionController(IPrescriptionService prescriptionService) : 
         return Ok(result);
     }
     
-    [HttpPost("/verify")]
+    [HttpPost("verify")]
     [DoctorRoleInterceptor]
     public async Task<ActionResult<bool>> VerifyPrescription(VerifyPrescriptionDto verifyPrescriptionDto)
     {

@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyMeds.WebAPI", "EasyMeds.WebAPI\EasyMeds.WebAPI.csproj", "{C7BEB9D7-3727-441F-807C-391A7A6957C0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyMeds.IoT", "EasyMeds.IoT\EasyMeds.IoT.csproj", "{FAB08943-AF3A-48B0-AE2F-D9A029205AB2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{C7BEB9D7-3727-441F-807C-391A7A6957C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7BEB9D7-3727-441F-807C-391A7A6957C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7BEB9D7-3727-441F-807C-391A7A6957C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAB08943-AF3A-48B0-AE2F-D9A029205AB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAB08943-AF3A-48B0-AE2F-D9A029205AB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAB08943-AF3A-48B0-AE2F-D9A029205AB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAB08943-AF3A-48B0-AE2F-D9A029205AB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

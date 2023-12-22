@@ -76,4 +76,58 @@ public class MedicineService(EasyMedsDbContext context) : IMedicineService
         await context.SaveChangesAsync();
         return true;
     }
+
+    public async Task<List<PrescriptedMedicineDto>> GetPrescriptedMedicines(int userId)
+    {
+        var currentDateUTC = DateTime.UtcNow.Date;
+        
+        var prescriptedMedicines = await context.Prescriptions
+            .Where(p => p.UserId == userId && p.DatePrescribedUTC != null)
+            .SelectMany(p => p.Medications
+                .Select(m => new PrescriptedMedicineDto(
+                    p.Id,
+                    m.MedicineId,
+                    p.Dosage,
+                    m.Frequency,
+                    p.Duration,
+                    p.DatePrescribedUTC!.Value
+                )))
+            .Where(dto => dto.Duration > 0 && dto.DatePrescribedUTC.AddDays(dto.Duration) >= currentDateUTC)
+            .Where(dto => dto.Frequency > 0) // Frequency validation
+            .ToListAsync();
+
+        foreach (var medicationDto in prescriptedMedicines)
+        {
+            var medicationLogsCount = context.MedicationLogs
+                .Count(log => log.MedicationId == medicationDto.MedicationId
+                              && log.UserId == userId
+                              && log.TimestampUTC.Date == currentDateUTC.Date);
+
+            if (medicationLogsCount < medicationDto.Frequency)
+            {
+                // throw error in case the medication was already taken for maximum frequency
+                throw new FieldAccessException();
+            }
+            
+            if (!context.MedicationLogs
+                    .Any(log => log.MedicationId == medicationDto.MedicationId
+                                && log.UserId == userId
+                                && log.TimestampUTC.Date == currentDateUTC))
+            {
+                // Log medication taken
+                var logEntry = new MedicationLog
+                {
+                    UserId = userId,
+                    MedicationId = medicationDto.MedicationId,
+                    TimestampUTC = DateTime.UtcNow
+                };
+
+                context.MedicationLogs.Add(logEntry);
+            }
+        }
+
+        await context.SaveChangesAsync();
+
+        return prescriptedMedicines;
+    }
 }

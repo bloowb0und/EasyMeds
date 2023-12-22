@@ -10,4 +10,5 @@ public interface IMedicineService
     Task<int> AddMedicineAsync(MedicineCreateDto medicineCreateDto);
     Task<bool> UpdateMedicineAsync(int medicineId, MedicineUpdateDto updatedMedicine);
     Task<bool> DeleteMedicineAsync(int medicineId);
+    Task<List<PrescriptedMedicineDto>> GetPrescriptedMedicines(int userId);
 }

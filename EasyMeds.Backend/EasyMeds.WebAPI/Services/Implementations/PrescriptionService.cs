@@ -25,6 +25,7 @@ public class PrescriptionService(EasyMedsDbContext context): IPrescriptionServic
                 Duration = p.Duration,
                 Medications = context.Medications
                     .Include(m => m.Medicine)
+                    .Where(x => x.PrescriptionId == p.Id)
                     .Select(x => new PrescriptionMedicationDto
                     {
                         Medicine = new MedicineDto
@@ -141,18 +142,11 @@ public class PrescriptionService(EasyMedsDbContext context): IPrescriptionServic
 
     public async Task VerifyPrescription(int doctorId, VerifyPrescriptionDto verifyPrescriptionDto)
     {
-        var user = await context.Users.FirstOrDefaultAsync(u => u.Id == verifyPrescriptionDto.userId);
-
-        if (user == null)
-        {
-            throw new ArgumentException(nameof(user));
-        }
-
         var prescription = await context.Prescriptions
             .Include(prescription => prescription.Doctor)
             .FirstOrDefaultAsync(p => p.Id == verifyPrescriptionDto.prescriptionId);
 
-        if (prescription == null || prescription.UserId != user.Id || prescription.Doctor != null)
+        if (prescription is not {Doctor: null})
         {
             throw new ArgumentException(nameof(prescription));
         }
